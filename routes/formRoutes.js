@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => res.redirect("/form"));
 
-router.get("/form", getLogin);
+router.get("/form", getForm);
 router.post("/form", postForm);
 router.get("/success", getSuccess);
 

@@ -3,8 +3,12 @@ import mongoose from "mongoose";
 import session from "express-session";
 import formRoute from "./routes/formRoutes.js";
 
+
+
 const app = express();
 const PORT = 3000;
+app.use(express.static('public'));
+
 
 // ⚠️ Direct MongoDB connection string (NO .env)
 const mongoURI = "mongodb+srv://mumthas:mumthas123@mumthas.gpioijt.mongodb.net/?retryWrites=true&w=majority&appName=mumthas";

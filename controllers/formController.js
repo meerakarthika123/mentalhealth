@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 import User from "../models/User.js";
+import Doctor from "../models/Doctor.js";
 
 export const getForm = (req, res) => {
 	res.render("form");
@@ -43,21 +44,27 @@ export const getLogin = (req, res) => {
 
 // ✅ Handle login logic
 export const postLogin = async (req, res) => {
-	const { email, password } = req.body;
+    const { email, password } = req.body;
 
-	try {
-		const user = await User.findOne({ email, password }); // Note: no hashing yet
+    // ✅ Admin check
+    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+        req.session.user = { email, role: "admin" };
+        return res.redirect("/admin-dashboard");
+    }
 
-		if (!user) {
-			return res.render("login", { error: "Invalid email or password!" });
-		}
-
-		req.session.user = user;
-		res.redirect("/dashboard");
-	} catch (err) {
-		res.send(" Login Error: " + err.message);
-	}
+    // ✅ Regular user check from DB
+    try {
+        const user = await User.findOne({ email, password });
+        if (!user) {
+            return res.render("login", { error: "Invalid credentials!" });
+        }
+        req.session.user = { ...user.toObject(), role: "user" };
+        res.redirect("/user-dashboard");
+    } catch (err) {
+        res.send("❌ Login error: " + err.message);
+    }
 };
+
 
 // ✅ Dashboard
 export const getDashboard = (req, res) => {
@@ -66,4 +73,22 @@ export const getDashboard = (req, res) => {
 };
 export const getSuccess = (req, res) => {
 	res.render("success", { user: req.session.user });
+};
+const ADMIN_CREDENTIALS = {
+    email: "admin@123",
+    password: "admin123"
+};
+export const getAdminDashboard = async (req, res) => {
+	if (req.session.user?.role !== "admin") return res.redirect("/login");
+	try {
+		const doctors = await Doctor.find();
+		res.render("admindashboard", { user: req.session.user, doctors }); // ✅ doctors passed here
+	} catch (err) {
+		res.send("Error fetching doctors: " + err.message);
+	}
+};
+
+export const postAddDoctor = async (req, res) => {
+  await Doctor.create(req.body);
+  res.redirect("/admin-dashboard");
 };

@@ -5,6 +5,7 @@ import {
 	getAdminDashboard, postAddDoctor,
 	getDashboard2, getPatient, getAppointment
 } from "../controllers/formController.js";
+// ✅ Correct import for default export
 import { doctorUpload } from "../middleware/upload.js";
 import {
   getDoctorEditForm,
@@ -23,7 +24,15 @@ router.get("/dashboard", getDashboard);
 
 // ✅ Use controller that fetches doctors
 router.get("/admin-dashboard", getAdminDashboard);
-router.post("/add-doctor", postAddDoctor);
+router.post(
+  "/add-doctor",
+  doctorUpload.fields([
+    { name: "profile", maxCount: 1 },
+    { name: "academicDocs", maxCount: 5 },
+    { name: "licenseCerts", maxCount: 5 },
+  ]),
+  postAddDoctor
+);
 
 // ✅ User dashboard route (already handles session)
 router.get("/user-dashboard", (req, res) => {
@@ -36,7 +45,11 @@ router.get("/appointment", getAppointment);
 
 
 router.get("/doctor/edit/:id", getDoctorEditForm);
-router.post("/doctor/edit/:id", doctorUpload, postDoctorEditForm);
+router.post("/doctor/edit/:id", doctorUpload.fields([
+    { name: "profile", maxCount: 1 },
+    { name: "academicDocs", maxCount: 5 },
+    { name: "licenseCerts", maxCount: 5 },
+  ]), postDoctorEditForm);
 
 
 export default router;

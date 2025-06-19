@@ -2,6 +2,8 @@ import { body, validationResult } from "express-validator";
 import User from "../models/User.js";
 import Doctor from "../models/Doctor.js";
 
+
+
 export const getForm = (req, res) => {
 	res.render("form");
 };
@@ -89,7 +91,25 @@ export const getAdminDashboard = async (req, res) => {
 };
 
 export const postAddDoctor = async (req, res) => {
-  await Doctor.create(req.body);
+  const { firstName, lastName, experience, expertise, address, description, dob } = req.body;
+
+  const profile = req.files["profile"]?.[0]?.filename || "";
+  const academicDocs = req.files["academicDocs"]?.map(f => f.filename) || [];
+  const licenseCerts = req.files["licenseCerts"]?.map(f => f.filename) || [];
+
+  await Doctor.create({
+    firstName,
+    lastName,
+    experience,
+    expertise,
+    address,
+    description,
+    dob,
+    profile,
+    academicDocs,
+    licenseCerts,
+  });
+
   res.redirect("/admin-dashboard");
 };
 export const getDashboard2 = (req, res) => {
@@ -112,7 +132,10 @@ export const getAppointment = (req, res) => {
 	}
 	res.render("appointment", { user: req.session.user });
 };
-
+export const getDoctorEditForm = async (req, res) => {
+  const doctor = await Doctor.findById(req.params.id);
+  res.render("doctor", { doctor });
+};
 
 export const postDoctorEditForm = async (req, res) => {
   try {
@@ -145,45 +168,4 @@ export const postDoctorEditForm = async (req, res) => {
     res.send("❌ Error updating doctor: " + err.message);
   }
 };
-export const getDoctorEditForm = async (req, res) => {
-  const doctor = await Doctor.findById(req.params.id);
-  if (!doctor) return res.status(404).send("Doctor not found.");
-  res.render("doctor", { doctor });
-};
-
-export const postDoctorEdit = async (req, res) => {
-  try {
-    const doctor = await Doctor.findById(req.params.id);
-    if (!doctor) return res.status(404).send("Doctor not found.");
-
-    const { firstName, lastName, experience, expertise, address, description, dob } = req.body;
-
-    doctor.firstName = firstName;
-    doctor.lastName = lastName;
-    doctor.experience = experience;
-    doctor.expertise = expertise;
-    doctor.address = address;
-    doctor.description = description;
-    doctor.dob = dob;
-
-    // Handle file uploads
-    if (req.files?.profile?.[0]) {
-      doctor.profile = req.files.profile[0].filename;
-    }
-
-    if (req.files?.academicDocs) {
-      doctor.academicDocs = req.files.academicDocs.map(f => f.filename);
-    }
-
-    if (req.files?.licenseCerts) {
-      doctor.licenseCerts = req.files.licenseCerts.map(f => f.filename);
-    }
-
-    await doctor.save();
-    res.redirect("/admin-dashboard");
-  } catch (err) {
-    res.send("Error updating doctor: " + err.message);
-  }
-};
-
 

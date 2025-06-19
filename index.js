@@ -42,13 +42,3 @@ app.use("/", formRoute);
 app.listen(PORT, () => {
 	console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-import multer from "multer";
-const upload = multer({ dest: "uploads/" });
-
-router.get("/doctor/edit/:id", getDoctorEditForm);
-router.post("/doctor/edit/:id", upload.fields([
-    { name: "profile", maxCount: 1 },
-    { name: "academicDocs", maxCount: 5 },
-    { name: "licenseCerts", maxCount: 5 }
-]), postDoctorEdit);
-

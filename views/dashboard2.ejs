@@ -32,14 +32,13 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/dashboard2">Home</a>
-    <a class="nav-link" href="/admin-dashboard">Doctor</a>
-    <button class="btn btn-outline-primary ms-auto" onclick="location.href='/admin-dashboard#add'">Add</button>
-  </div>
-</nav>
-
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <a class="navbar-brand" href="#">Admin Dashboard</a>
+        <div class="ms-auto d-flex align-items-center text-white">
+            <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
+            <span><%= user.email %></span>
+        </div>
+    </nav>
 
     <div class="container mt-5">
         <div class="row text-center">

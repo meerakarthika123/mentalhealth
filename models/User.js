@@ -1,11 +1,16 @@
+// models/Patient.js
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-	firstName: String,
-	lastName: String,
-	email: String,
-	password: String
+const patientSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: String,
+  pno: String,
+  dob: Date,
+  gender: String,
+  profile: String,
+  history: String,
+  reports: [String],
 });
 
-const User = mongoose.model("User", userSchema);
-export default User;
+export default mongoose.model("Patient", patientSchema);

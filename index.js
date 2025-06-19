@@ -11,7 +11,7 @@ app.use(express.static('public'));
 
 
 // ⚠️ Direct MongoDB connection string (NO .env)
-const mongoURI = "mongodb+srv://mumthas:mumthas123@mumthas.gpioijt.mongodb.net/?retryWrites=true&w=majority&appName=mumthas";
+const mongoURI = "mongodb+srv://meerainmca2126:root@meera46.t1gf1ia.mongodb.net/?retryWrites=true&w=majority&appName=meera46";
 
 // Replace <username> and <password> with your MongoDB Atlas credentials
 mongoose.connect(mongoURI, {

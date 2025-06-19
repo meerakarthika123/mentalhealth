@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .patient-card {
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .nav-link.active {
+      border-bottom: 2px solid teal;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-light bg-light px-4">
+  <a href="/dashboard2" class="nav-link">Home</a>
+  <a href="/admin-dashboard" class="nav-link active">Patients</a>
+</nav>
+
+<div class="container mt-4">
+  <!-- Top bar: Search + Buttons -->
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <input type="text" class="form-control" placeholder="Search by name..." id="searchInput">
+    </div>
+    <div>
+      <button class="btn btn-primary me-2" onclick="toggleAddForm()">Add</button>
+      <button class="btn btn-outline-secondary">Filter</button>
+    </div>
+  </div>
+
+  <!-- Add Patient Form -->
+  <form class="mt-4" id="addForm" method="POST" action="/add-patient" enctype="multipart/form-data" style="display:none;">
+    <ul class="nav nav-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#details">Details</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#documents">Documents</a></li>
+    </ul>
+
+    <div class="tab-content p-3 border border-top-0">
+      <!-- Details Tab -->
+      <div class="tab-pane fade show active" id="details">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>First Name</label>
+            <input name="firstName" class="form-control" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Last Name</label>
+            <input name="lastName" class="form-control" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Email</label>
+            <input name="email" type="email" class="form-control">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Phone Number</label>
+            <input name="pno" class="form-control">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Date of Birth</label>
+            <input type="date" name="dob" class="form-control" />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Gender</label>
+            <select name="gender" class="form-control">
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Upload Profile Picture</label>
+            <input type="file" name="profile" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Tab -->
+      <div class="tab-pane fade" id="documents">
+        <div class="mb-3">
+          <label>Medical History (Optional)</label>
+          <textarea name="history" rows="4" class="form-control" placeholder="e.g. Allergies, chronic diseases, etc."></textarea>
+        </div>
+        <div class="mb-3">
+          <label>Upload Medical Reports</label>
+          <input type="file" name="reports" multiple class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-3 text-end">
+      <button type="button" class="btn btn-outline-secondary" onclick="toggleAddForm()">Cancel</button>
+      <button type="submit" class="btn btn-success">Save</button>
+    </div>
+  </form>
+
+  <!-- Patient Cards -->
+  <div class="row mt-5" id="patientCards">
+  <% patients.forEach(patient => { %>
+    <div class="col-md-4">
+      <div class="patient-card">
+        <% if (patient.profile) { %>
+          <img src="/uploads/<%= patient.profile %>" alt="Profile Picture" 
+               style="width:100%; max-height:200px; object-fit:cover; border-radius:8px;" />
+        <% } else { %>
+          <img src="/default-profile.png" alt="No Profile Picture" 
+               style="width:100%; max-height:200px; object-fit:cover; border-radius:8px;" />
+        <% } %>
+
+        <h5><%= patient.firstName %> <%= patient.lastName %></h5>
+        <p><strong>Email:</strong> <%= patient.email %></p>
+        <p><strong>Phone:</strong> <%= patient.pno %></p>
+        <p><strong>DOB:</strong> <%= patient.dob ? patient.dob.toISOString().split('T')[0] : 'N/A' %></p>
+
+        <a href="/patient/edit/<%= patient._id %>" class="btn btn-sm btn-info">Edit</a>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleAddForm() {
+    const form = document.getElementById("addForm");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+  }
+
+  // Live search
+  document.getElementById("searchInput").addEventListener("input", function () {
+    const value = this.value.toLowerCase();
+    const cards = document.querySelectorAll(".patient-card");
+    cards.forEach(card => {
+      const name = card.querySelector("h5").textContent.toLowerCase();
+      card.closest(".col-md-4").style.display = name.includes(value) ? "block" : "none";
+    });
+  });
+</script>
+</body>
+</html>

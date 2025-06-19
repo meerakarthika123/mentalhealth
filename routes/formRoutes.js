@@ -88,3 +88,7 @@ router.post("/patient/edit/:id", patientUpload.fields([
   { name: "profile", maxCount: 1 },
   { name: "reports", maxCount: 5 }
 ]), postPatientEditForm);
+import { getDoctorById } from "../controllers/formController.js"; // add this import
+
+// Add this route before export default router
+router.get("/doctor/:id", getDoctorById);

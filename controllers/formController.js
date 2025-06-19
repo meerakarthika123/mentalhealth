@@ -244,3 +244,15 @@ export const postPatientEditForm = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+export async function getDoctorById(req, res) {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) {
+      return res.status(404).send("Doctor not found");
+    }
+    res.render("doctorProfile", { doctor }); // or send JSON, your choice
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+}

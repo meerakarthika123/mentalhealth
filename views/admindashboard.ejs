@@ -1,4 +1,3 @@
-<!-- views/admindashboard.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +11,18 @@
       padding: 16px;
       margin: 10px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
     }
     .nav-link.active {
       border-bottom: 2px solid teal;
+    }
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      background: #f0f0f0;
     }
   </style>
 </head>
@@ -25,10 +33,8 @@
 </nav>
 
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center">
-    <div>
-      <input type="text" class="form-control" placeholder="Search by name..." id="searchInput">
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <input type="text" class="form-control w-50" placeholder="Search by name..." id="searchInput">
     <div>
       <button class="btn btn-primary me-2" onclick="toggleAddForm()">Add</button>
       <button class="btn btn-outline-secondary">Filter</button>
@@ -103,13 +109,14 @@
   <!-- Doctor Cards -->
   <div class="row mt-5" id="doctorCards">
     <% doctors.forEach(doc => { %>
-      <div class="col-md-4 doctor-card-container">
+      <div class="col-md-3 doctor-card-container">
         <div class="doctor-card">
+          <img src="<%= doc.profilePath ? '/uploads/' + doc.profilePath : '/placeholder.png' %>" class="profile-img" />
           <h5><%= doc.firstName %> <%= doc.lastName %></h5>
           <p><strong>Experience:</strong> <%= doc.experience %></p>
           <p><strong>Expertise:</strong> <%= doc.expertise %></p>
           <p><strong>Speaks:</strong> English, Hindi</p>
-          <a href="/doctor/edit/<%= doc._id %>" class="btn btn-sm btn-info">Edit</a>
+          <a href="/doctor/<%= doc._id %>" class="btn btn-info btn-sm">View More</a>
         </div>
       </div>
     <% }) %>
@@ -123,7 +130,6 @@
     form.style.display = form.style.display === "none" ? "block" : "none";
   }
 
-  // Simple search filter
   document.getElementById("searchInput").addEventListener("input", function () {
     const value = this.value.toLowerCase();
     const cards = document.querySelectorAll(".doctor-card-container");

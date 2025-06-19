@@ -182,6 +182,15 @@ export const postDoctorEditForm = async (req, res) => {
     res.send("❌ Error updating doctor: " + err.message);
   }
 };
+export const getDoctorDetails = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    res.render("doctorDetails", { doctor });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching doctor details");
+  }
+};
 
 
 export const postAddPatient = async (req, res) => {

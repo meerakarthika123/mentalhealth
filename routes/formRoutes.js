@@ -3,7 +3,7 @@ import {
 	getForm, postForm, getSuccess,
 	getLogin, postLogin, getDashboard,
 	getAdminDashboard, postAddDoctor,
-	getDashboard2, getPatient, getAppointment
+	getDashboard2, getPatient, getAppointment,getDoctorDetails
 } from "../controllers/formController.js";
 // ✅ Correct import for default export
 import { doctorUpload } from "../middleware/upload.js";
@@ -21,6 +21,7 @@ router.get("/success", getSuccess);
 router.get("/login", getLogin);
 router.post("/login", postLogin);
 router.get("/dashboard", getDashboard);
+router.get("/doctor/:id", getDoctorDetails);
 
 // ✅ Use controller that fetches doctors
 router.get("/admin-dashboard", getAdminDashboard);

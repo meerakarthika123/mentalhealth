@@ -46,10 +46,10 @@ export const getLogin = (req, res) => {
 export const postLogin = async (req, res) => {
     const { email, password } = req.body;
 
-    // ✅ Admin check
+    
     if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
         req.session.user = { email, role: "admin" };
-        return res.redirect("/admin-dashboard");
+        return res.redirect("/dashboard2");
     }
 
     // ✅ Regular user check from DB
@@ -92,3 +92,98 @@ export const postAddDoctor = async (req, res) => {
   await Doctor.create(req.body);
   res.redirect("/admin-dashboard");
 };
+export const getDashboard2 = (req, res) => {
+	if (!req.session.user || req.session.user.role !== "admin") {
+		return res.redirect("/login");
+	}
+	res.render("dashboard2", { user: req.session.user });
+};
+
+export const getPatient = (req, res) => {
+	if (!req.session.user || req.session.user.role !== "admin") {
+		return res.redirect("/login");
+	}
+	res.render("patient", { user: req.session.user });
+};
+
+export const getAppointment = (req, res) => {
+	if (!req.session.user || req.session.user.role !== "admin") {
+		return res.redirect("/login");
+	}
+	res.render("appointment", { user: req.session.user });
+};
+
+
+export const postDoctorEditForm = async (req, res) => {
+  try {
+    const { firstName, lastName, experience, expertise, address, description, dob } = req.body;
+    const updateData = {
+      firstName,
+      lastName,
+      experience,
+      expertise,
+      address,
+      description,
+      dob
+    };
+
+    if (req.files["profile"]) {
+      updateData.profile = "/uploads/" + req.files["profile"][0].filename;
+    }
+
+    if (req.files["academicDocs"]) {
+      updateData.academicDocs = req.files["academicDocs"].map(f => "/uploads/" + f.filename);
+    }
+
+    if (req.files["licenseCerts"]) {
+      updateData.licenseCerts = req.files["licenseCerts"].map(f => "/uploads/" + f.filename);
+    }
+
+    await Doctor.findByIdAndUpdate(req.params.id, updateData);
+    res.redirect("/admin-dashboard");
+  } catch (err) {
+    res.send("❌ Error updating doctor: " + err.message);
+  }
+};
+export const getDoctorEditForm = async (req, res) => {
+  const doctor = await Doctor.findById(req.params.id);
+  if (!doctor) return res.status(404).send("Doctor not found.");
+  res.render("doctor", { doctor });
+};
+
+export const postDoctorEdit = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) return res.status(404).send("Doctor not found.");
+
+    const { firstName, lastName, experience, expertise, address, description, dob } = req.body;
+
+    doctor.firstName = firstName;
+    doctor.lastName = lastName;
+    doctor.experience = experience;
+    doctor.expertise = expertise;
+    doctor.address = address;
+    doctor.description = description;
+    doctor.dob = dob;
+
+    // Handle file uploads
+    if (req.files?.profile?.[0]) {
+      doctor.profile = req.files.profile[0].filename;
+    }
+
+    if (req.files?.academicDocs) {
+      doctor.academicDocs = req.files.academicDocs.map(f => f.filename);
+    }
+
+    if (req.files?.licenseCerts) {
+      doctor.licenseCerts = req.files.licenseCerts.map(f => f.filename);
+    }
+
+    await doctor.save();
+    res.redirect("/admin-dashboard");
+  } catch (err) {
+    res.send("Error updating doctor: " + err.message);
+  }
+};
+
+

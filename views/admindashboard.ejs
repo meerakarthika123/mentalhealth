@@ -21,6 +21,10 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-light bg-light">
+  <a href="/dashboard2" class="nav-link">Home</a>
+  <a href="/admin-dashboard" class="nav-link">Doctor</a>
+</nav>
     <div class="container mt-4">
         <h2 class="mb-4">Admin Dashboard</h2>
 
@@ -43,23 +47,20 @@
             </div>
             <button type="submit" class="btn btn-success">Submit</button>
         </form>
+<div class="row mt-5">
+  <% doctors.forEach(doc => { %>
+    <div class="col-md-4">
+      <div class="doctor-card">
+        <h5><%= doc.firstName %> <%= doc.lastName %></h5>
+        <p><strong><%= doc.experience %> experience</strong></p>
+        <p><strong>Expertise:</strong> <%= doc.expertise %></p>
+        <p><strong>Description:</strong> <%= doc.description %></p>
+        <button class="btn btn-info" onclick="location.href='/doctor/edit/<%= doc._id %>'">Edit</button>
+      </div>
+    </div>
+  <% }) %>
+</div>
 
-        <!-- Doctor Cards -->
-        <div class="row mt-5">
-            <% if (doctors && doctors.length > 0) { %>
-                <% doctors.forEach(doc => { %>
-                    <div class="col-md-4">
-                        <div class="doctor-card">
-                            <h5><%= doc.name %></h5>
-                            <p><strong>Specialization:</strong> <%= doc.specialization %></p>
-                            <p><strong>Phone:</strong> <%= doc.phone %></p>
-                        </div>
-                    </div>
-                <% }) %>
-            <% } else { %>
-                <p class="mt-4">No doctors added yet.</p>
-            <% } %>
-        </div>
     </div>
 
     <script>
